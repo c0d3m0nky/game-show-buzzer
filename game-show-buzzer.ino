@@ -15,8 +15,6 @@
 
 #ifdef Proto2p
 
-#define MAX_PLAYERS   2
-
 Player players[MAX_PLAYERS] = {
   { PLAYER1, PURPLE,  NULL, false, P1_PX },
   { PLAYER2, BLUE,    NULL, false, P2_PX }
@@ -71,12 +69,13 @@ void loop() {
     firstLoop = false;
     
     Serial.println("GameBuzzer");
-    
-    for (int i = 0; i < MAX_PLAYERS; i++) {
-      Serial.println(colorToStr(players[i].color));
-    }
-
-    delay(3000);
+//    Serial.println("MAX_PLAYERS: " + String(MAX_PLAYERS));
+//    
+//    for (int i = 0; i < MAX_PLAYERS; i++) {
+//      Serial.println(colorToStr(players[i].color));
+//    }
+//
+//    delay(3000);
     
     if (digitalRead(PROCTOR) == LOW) setState(TEST);
     else setState(NEUTRAL);
@@ -99,18 +98,18 @@ void loop() {
 void setState(State s) {
   switch (s) {
     case NEUTRAL:
+      startRainbowVomit();
+      Serial.println("Shuffling");
+      shufflePlayers(players, shuffle);
+//      for (int i = 0; i < MAX_PLAYERS; i++) {
+//        Serial.println(colorToStr(shuffle[i].color));
+//      }
+      Serial.println("Shuffled");
+      startRainbowVomit();
       setColor(WHITE);
       Serial.println("State: " + stateToStr(s));
       break;
     case READY:
-      shufflePlayers(players, shuffle);
-      
-      for (int i = 0; i < MAX_PLAYERS; i++) {
-        Serial.println(colorToStr(shuffle[i].color));
-      }
-  
-      delay(3000);
-      
       setColor(GREEN);
       Serial.println("State: " + stateToStr(s));
       break;
@@ -133,7 +132,7 @@ void setState(State s) {
 void setPressedEarlys() {
   for (int i = 0; i < MAX_PLAYERS; i++) {
     shuffle[i].debounce.update();
-    shuffle[i].pressedEarly = shuffle[i].debounce.justPressed();
+    shuffle[i].pressedEarly = shuffle[i].debounce.justPressed() || !digitalRead[shuffle[i].pin];
   }
 }
 

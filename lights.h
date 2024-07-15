@@ -70,14 +70,6 @@ void setPixel(Pixel pixel, Color color) {
 
 #ifdef Proto2p
 
-void startRainbowVomit() {
-//  Serial.println("λ - startRainbowVomit()");
-}
-
-void stopRainbowVomit() {
-//  Serial.println("λ - stopRainbowVomit()");
-}
-
 void allOff() {
   digitalWrite(GREEN_LV, LED_OFF);
   digitalWrite(PURPLE_LV, LED_OFF);
@@ -107,6 +99,25 @@ void setColor(Color color) {
     default:
       break;
   }
+}
+
+void startRainbowVomit() {
+  allOff();
+  setColor(GREEN);
+  delay(LED_DELAY);
+  allOff();
+  allOff();
+  setColor(PURPLE);
+  delay(LED_DELAY);
+  allOff();
+  allOff();
+  setColor(BLUE);
+  delay(LED_DELAY);
+  allOff();
+}
+
+void stopRainbowVomit() {
+//  Serial.println("λ - stopRainbowVomit()");
 }
 
 void setPixel(Pixel pixel, Color color) {

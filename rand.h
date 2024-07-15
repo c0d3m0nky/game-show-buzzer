@@ -48,15 +48,18 @@ int sortIntPair(const void *ap, const void *bp)
 }
 
 void shufflePlayers(Player *players, Player *shuffle) {
+//  Serial.println("MAX_PLAYERS: " + String(MAX_PLAYERS));
   IntPair rando[MAX_PLAYERS] = {};
   
   for (int i = 0; i < MAX_PLAYERS; i++) {
     rando[i] = {i,randlist[random(512)]};
+//    Serial.println("rando: " + String(i) + " - " + String(rando[i].value));
   }
 
   qsort(rando, MAX_PLAYERS, sizeof(rando[0]), sortIntPair);
   
   for (int i = 0; i < MAX_PLAYERS; i++) {
     shuffle[i] = players[rando[i].key];
+//    Serial.println("shuffle: " + String(i) + " - " + String(rando[i].key) + " - " + String(rando[i].value) + " - " + colorToStr(shuffle[i].color));
   }
 }

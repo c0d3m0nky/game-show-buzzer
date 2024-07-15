@@ -27,6 +27,8 @@
 
 #undef  Stubs
 typedef int  Pixel;
+#define MAX_PLAYERS     2
+
 #define LED_ON          HIGH
 #define LED_OFF         LOW
 
