@@ -67,3 +67,85 @@ void setPixel(Pixel pixel, Color color) {
 }
 
 #endif
+
+#ifdef Proto2p
+
+void startRainbowVomit() {
+//  Serial.println("λ - startRainbowVomit()");
+}
+
+void stopRainbowVomit() {
+//  Serial.println("λ - stopRainbowVomit()");
+}
+
+void allOff() {
+  digitalWrite(GREEN_LV, LED_OFF);
+  digitalWrite(PURPLE_LV, LED_OFF);
+  digitalWrite(BLUE_LV, LED_OFF);
+}
+
+void allOn() {
+  digitalWrite(GREEN_LV, LED_ON);
+  digitalWrite(PURPLE_LV, LED_ON);
+  digitalWrite(BLUE_LV, LED_ON);
+}
+
+void setColor(Color color) {
+//  Serial.println("λ - setColor(" + colorToStr(color) + ")");
+  allOff();
+  
+  switch (color) {
+    case GREEN:
+      digitalWrite(GREEN_LV, LED_ON);
+      break;
+    case PURPLE:
+      digitalWrite(PURPLE_LV, LED_ON);
+      break;
+    case BLUE:
+      digitalWrite(BLUE_LV, LED_ON);
+      break;
+    default:
+      break;
+  }
+}
+
+void setPixel(Pixel pixel, Color color) {
+//  Serial.println("λ - setPixel(" + String(pixel) + ", " + colorToStr(color) + ")");
+  if (color == COLOR_OFF) digitalWrite(pixel, LED_OFF);
+  else digitalWrite(pixel, LED_ON);
+}
+
+void startupBlink() {
+  allOff();
+  delay(LED_DELAY);
+  allOn();
+  delay(LED_DELAY*2);
+  allOff();
+  delay(LED_DELAY);
+  allOn();
+  delay(LED_DELAY);
+  allOff();
+  delay(LED_DELAY);
+  allOn();
+  delay(LED_DELAY);
+  allOff();
+  delay(LED_DELAY);
+  allOn();
+  delay(LED_DELAY);
+  allOff();
+  delay(LED_DELAY);
+  allOn();
+  delay(LED_DELAY);
+  allOff();
+  delay(LED_DELAY*4);
+  allOn();
+  delay(LED_DELAY);
+  allOff();
+  delay(LED_DELAY*2);
+  allOn();
+  delay(LED_DELAY);
+  allOff();
+  delay(LED_DELAY*2);
+}
+
+#endif
