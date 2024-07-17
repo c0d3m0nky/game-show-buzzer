@@ -1,4 +1,3 @@
-typedef enum {COLOR_OFF, PURPLE, BLUE, RED, YELLOW, MAGENTA, CYAN, ORANGE, GREEN, WHITE, RAINBOW } Color;
 typedef enum {NEUTRAL, READY, BUZZED, TEST} State;
 
 typedef struct {
@@ -21,12 +20,8 @@ String colorToStr(Color color) {
       return "Red";
     case YELLOW:
       return "Yellow";
-    case MAGENTA:
-      return "Magenta";
     case CYAN:
       return "Cyan";
-    case ORANGE:
-      return "Orange";
     case GREEN:
       return "Green";
     case WHITE:
@@ -37,7 +32,6 @@ String colorToStr(Color color) {
       return "Unknown";
   }
 }
-
 
 String stateToStr(State s) {
   switch (s) {

@@ -1,11 +1,14 @@
-//#define DEBUG
+#define DEBUG
+
 #define LED_DELAY     125
-#define MAX_PLAYERS   7
-#define ADA_DEB_DELAY 7
+#define MAX_PLAYERS   6
+#define ADA_DEB_DELAY 10
+
+typedef enum {COLOR_OFF, BLUE, RED, YELLOW, PURPLE, CYAN, GREEN, WHITE } Color;
 
 // hardware
 #define   SeedXiao
-#define   Proto2p
+#define   NeoP24KO
 #include  "hardwareDefines.h"
 
 #include "Adafruit_Debounce.h"
@@ -28,11 +31,10 @@ Player players[MAX_PLAYERS] = {
   { PLAYER2, BLUE,    NULL, false, P2_PX },
   { PLAYER3, RED,     NULL, false, P3_PX },
   { PLAYER4, YELLOW,  NULL, false, P4_PX },
-  { PLAYER5, MAGENTA, NULL, false, P5_PX },
-  { PLAYER6, CYAN,    NULL, false, P6_PX },
-  { PLAYER7, ORANGE,  NULL, false, P7_PX }
+  { PLAYER5, GREEN,   NULL, false, P5_PX },
+  { PLAYER6, CYAN,    NULL, false, P6_PX }
 };
-Player shuffle[MAX_PLAYERS] = { nullPlayer, nullPlayer, nullPlayer, nullPlayer, nullPlayer, nullPlayer, nullPlayer };
+Player shuffle[MAX_PLAYERS] = { nullPlayer, nullPlayer, nullPlayer, nullPlayer, nullPlayer, nullPlayer };
 
 #endif
 
@@ -46,12 +48,11 @@ bool firstLoop = true;
 
 void setup() {
   Serial.begin(9600);
-  while (!Serial) ;
+  long waitUntil = millis() + 1000;
+  while (!Serial && waitUntil > millis()) ;
   
   randomSeed(analogRead(ANALOG_SEED_PIN));
-  pinMode(LED, OUTPUT);
-  pinMode(PROCTOR, INPUT_PULLUP);
-
+  
   lightingSetup();
   
   for (int i = 0; i < MAX_PLAYERS; i++) {
@@ -65,17 +66,9 @@ void setup() {
 void loop() {
   if(firstLoop) {
     startupBlink();
-    delay(1000);
     firstLoop = false;
     
     Serial.println("GameBuzzer");
-//    Serial.println("MAX_PLAYERS: " + String(MAX_PLAYERS));
-//    
-//    for (int i = 0; i < MAX_PLAYERS; i++) {
-//      Serial.println(colorToStr(players[i].color));
-//    }
-//
-//    delay(3000);
     
     if (digitalRead(PROCTOR) == LOW) setState(TEST);
     else setState(NEUTRAL);
@@ -98,14 +91,14 @@ void loop() {
 void setState(State s) {
   switch (s) {
     case NEUTRAL:
-      startRainbowVomit();
+      doRainbowVomit();
       Serial.println("Shuffling");
       shufflePlayers(players, shuffle);
 //      for (int i = 0; i < MAX_PLAYERS; i++) {
 //        Serial.println(colorToStr(shuffle[i].color));
 //      }
       Serial.println("Shuffled");
-      startRainbowVomit();
+      doRainbowVomit();
       setColor(WHITE);
       Serial.println("State: " + stateToStr(s));
       break;
@@ -114,14 +107,12 @@ void setState(State s) {
       Serial.println("State: " + stateToStr(s));
       break;
     case BUZZED:
-      startRainbowVomit();
-      delay(RBV_CYCLE);
-      stopRainbowVomit();
+      doRainbowVomit();
       setColor(player.color);
       Serial.println(colorToStr(player.color) + " player buzzed in");
       break;
     case TEST:
-      startRainbowVomit();
+      allOff();
       Serial.println("In Test mode");
       break;
   }
@@ -167,6 +158,7 @@ void testLoop() {
   bool tripped = false;
   String msg = "";
 
+  allOff(false);
   proctor.debounce.update();
 
   if (proctor.debounce.justPressed() || !digitalRead(proctor.pin)) {
@@ -185,6 +177,8 @@ void testLoop() {
     } 
     else setPixel(players[i].pixel, COLOR_OFF);
   }
+
+  draw();
   
   if (!tripped) msg = "None";
   
