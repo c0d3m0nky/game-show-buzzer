@@ -158,7 +158,6 @@ void testLoop() {
   bool tripped = false;
   String msg = "";
 
-  allOff(false);
   proctor.debounce.update();
 
   if (proctor.debounce.justPressed() || !digitalRead(proctor.pin)) {
