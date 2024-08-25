@@ -1,3 +1,5 @@
+#include "models.h"
+
 // Generated from random.org
 char randlist[512] = {
   178, 211,   4, 246,  82,  42,  18,  73, 225, 251,   8,  23,  12,  38,  47, 168,

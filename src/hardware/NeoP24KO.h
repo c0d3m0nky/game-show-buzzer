@@ -1,4 +1,5 @@
 #include <FastLED.h>
+#include "models.h"
 
 #define FLED_DATA       10
 #define NUM_LEDS        24
@@ -19,7 +20,7 @@
 #define COLOR_OFF_LV    CRGB::Black
 #define PIXEL_SIZE      3
 
-typedef char Pixel;
+
 typedef char PixelRange[PIXEL_SIZE];
 
 CRGB leds[NUM_LEDS];

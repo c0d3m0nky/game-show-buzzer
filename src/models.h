@@ -1,14 +1,33 @@
+#include <Adafruit_Debounce.h>
+
+typedef char Pixel;
+
+enum Color {COLOR_OFF, BLUE, RED, YELLOW, PURPLE, CYAN, GREEN, WHITE };
+
 typedef enum {NEUTRAL, READY, BUZZED, TEST} State;
 
-typedef struct {
-  int pin;
-  Color color;
-  Adafruit_Debounce debounce;
-  bool pressedEarly;
-  Pixel pixel;
-} Player;
+class Player {
+  public:
+    int pin;
+    Color color { Color::COLOR_OFF };
+    Adafruit_Debounce debounce;
+    bool pressedEarly { false };
+    Pixel pixel;
 
-Player nullPlayer = { -1, WHITE, -1};
+    Player() : debounce(-1, LOW) {
+      pin = -1;
+    }
+
+    Player(int pin_a, Color color_a, Pixel pixel_a)  : debounce(pin_a, LOW) {
+      pin = pin_a;
+      color = color_a;
+      pixel = pixel_a;
+    }
+
+    bool operator ==(const Player& b) {
+      return pin == b.pin;
+    }
+};
 
 String colorToStr(Color color) {
   switch (color) {

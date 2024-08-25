@@ -1,6 +1,4 @@
 
-#define LED_ON          LOW
-#define LED_OFF         HIGH
 
 // Controllers
 #ifdef SeedXiao
@@ -25,13 +23,13 @@
 #undef  Stubs
 #define MAX_PLAYERS     2
 
-#include "Proto2p.h"
+#include "hardware/Proto2p.c"
 
 #endif
 
 #ifdef NeoP24KO
 
 #undef  Stubs
-#include "NeoP24KO.h"
+#include "hardware/NeoP24KO.h"
 
 #endif
