@@ -2,11 +2,11 @@
 #include <FastLED.h>
 #include <Adafruit_Debounce.h>
 
+#include "hardware/lights.h"
 #include "hardware/hardwareDefines.h"
 
 #include "models.h"
 #include "rand.h"
-#include "lights.h"
 
 Player nullPlayer = {};
 
@@ -87,3 +87,103 @@ void loop() {
   }
 }
 
+void setState(State s) {
+  switch (s) {
+    case NEUTRAL:
+      doRainbowVomit();
+      Serial.println("Shuffling");
+      shufflePlayers(players, shuffle);
+//      for (int i = 0; i < MAX_PLAYERS; i++) {
+//        Serial.println(colorToStr(shuffle[i].color));
+//      }
+      Serial.println("Shuffled");
+      doRainbowVomit();
+      setColor(Color::WHITE);
+      Serial.println("State: " + stateToStr(s));
+      break;
+    case READY:
+      setColor(Color::GREEN);
+      Serial.println("State: " + stateToStr(s));
+      break;
+    case BUZZED:
+      doRainbowVomit();
+      setColor(player.color);
+      Serial.println(colorToStr(player.color) + " player buzzed in");
+      break;
+    case TEST:
+      allOff();
+      Serial.println("In Test mode");
+      break;
+  }
+  
+  state = s;
+}
+
+void setPressedEarlys() {
+  for (int i = 0; i < MAX_PLAYERS; i++) {
+    shuffle[i].debounce.update();
+    shuffle[i].pressedEarly = shuffle[i].debounce.justPressed() || !digitalRead(shuffle[i].pin);
+  }
+}
+
+void checkProctor() {
+  proctor.debounce.update();
+    
+  if (proctor.debounce.justReleased()) {
+    if (state == NEUTRAL) setState(READY);
+    else if (state == BUZZED) setState(NEUTRAL);
+  }
+
+  delay(ADA_DEB_DELAY);
+}
+
+Player checkButtons() {
+  for (int i = 0; i < MAX_PLAYERS; i++) {
+    shuffle[i].debounce.update();
+    
+    if (shuffle[i].pressedEarly) {
+      Serial.println(colorToStr(shuffle[i].color) + " pressed early");
+      if (shuffle[i].debounce.justReleased()) shuffle[i].pressedEarly = false;
+    }
+    else if (shuffle[i].debounce.justPressed()) return shuffle[i];
+  }
+  
+  return nullPlayer;
+}
+
+String lastTestLog = "";
+
+void testLoop() {
+  bool tripped = false;
+  String msg = "";
+
+  proctor.debounce.update();
+
+  if (proctor.debounce.justPressed() || !digitalRead(proctor.pin)) {
+    msg += " proctor";
+    setPixel(proctor.pixel, proctor.color);
+    tripped = true;
+  }
+  else setPixel(proctor.pixel, Color::COLOR_OFF);
+
+  for (int i = 0; i < MAX_PLAYERS; i++) {
+    players[i].debounce.update();
+    if (players[i].debounce.justPressed() || !digitalRead(players[i].pin)) {
+      msg += " p" + String(i + 1) + ":" + String(players[i].pin);
+      setPixel(players[i].pixel, players[i].color);
+      tripped = true;
+    } 
+    else setPixel(players[i].pixel, Color::COLOR_OFF);
+  }
+
+  draw();
+  
+  if (!tripped) msg = "None";
+  
+  if (msg != lastTestLog) {
+    lastTestLog = msg;
+    Serial.println(msg);
+  }
+  
+  delay(ADA_DEB_DELAY);
+}

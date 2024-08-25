@@ -108,8 +108,9 @@ void draw() {
 
 void setPixel(Pixel pixel, Color color) {
   CRGB c = translateColor(color);
-  leds[pixels[pixel][0]] = c;
-  leds[pixels[pixel][1]] = c;
-  leds[pixels[pixel][2]] = c;
-  FastLED.show();
+  for (int i = 0; i < PIXEL_SIZE; i++) {
+    int ledi = pixels[pixel][i];
+
+    if (ledi >= 0) leds[ledi] = c;
+  }
 }
